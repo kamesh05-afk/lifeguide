@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>LifeGuide | Life Emergency Guide</title>
+  <style>
+    :root { --bg:#f3f6fb; --card:#fff; --ink:#152238; --muted:#5d6b82; --accent:#0b6bcb; --line:#dce4ef; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--ink); }
+    header { background:#101827; color:#fff; padding:28px 18px 24px; }
+    .wrap { max-width:900px; margin:auto; }
+    .brand { font-weight:800; letter-spacing:.3px; font-size:1.7rem; }
+    .brand span { color:#65c8ff; }
+    header p { color:#d7e2f1; line-height:1.5; margin:8px 0 0; }
+    main { padding:18px; }
+    .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin:0 0 16px; }
+    button, select, input { font:inherit; }
+    select, input { border:1px solid var(--line); border-radius:12px; padding:11px 12px; background:white; color:var(--ink); }
+    input { flex:1; min-width:180px; }
+    .notice { border:1px solid #f3d48b; background:#fff8e5; padding:13px 14px; border-radius:14px; margin-bottom:18px; line-height:1.5; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:17px; box-shadow:0 4px 14px #182b4610; }
+    .icon { font-size:1.7rem; }
+    h2 { font-size:1.1rem; margin:8px 0; }
+    .card p { color:var(--muted); line-height:1.5; margin:0 0 14px; }
+    .primary { background:var(--accent); color:white; border:0; border-radius:10px; padding:10px 13px; cursor:pointer; font-weight:650; }
+    .secondary { background:white; color:var(--ink); border:1px solid var(--line); border-radius:10px; padding:10px 13px; cursor:pointer; }
+    .details { display:none; margin-top:15px; border-top:1px solid var(--line); padding-top:12px; line-height:1.55; }
+    .details.show { display:block; }
+    .details ol { padding-left:22px; }
+    .details li { margin:8px 0; }
+    .urgent { border-left:4px solid #d93025; padding:10px 12px; background:#fff1f0; border-radius:8px; margin-top:12px; }
+    footer { max-width:900px; margin:auto; padding:0 18px 28px; color:var(--muted); font-size:.9rem; line-height:1.5; }
+    .empty { display:none; color:var(--muted); padding:18px 0; }
+    a { color:var(--accent); }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">Life<span>Guide</span> 🆘</div>
+    <p id="tagline">Clear steps for unexpected situations — in English and Tamil.</p>
+  </div>
+</header>
+<main class="wrap">
+  <div class="toolbar">
+    <select id="language" aria-label="Choose language">
+      <option value="en">English</option>
+      <option value="ta">தமிழ்</option>
+    </select>
+    <input id="search" type="search" placeholder="Search a problem…" aria-label="Search guides">
+  </div>
+  <div class="notice" id="notice"></div>
+  <section class="grid" id="cards"></section>
+  <p class="empty" id="empty"></p>
+</main>
+<footer id="footer"></footer>
+<script>
+const guides = [
+ {id:"phone", icon:"📱", en:{title:"Phone stolen or lost",desc:"Protect your SIM, accounts and device.",steps:["Use another trusted device to locate or secure your phone through the phone maker’s official service, if enabled.","Contact your mobile operator to block the SIM and ask about replacement.","Change the password for your main email and important accounts; sign out other sessions where possible.","If theft is suspected, report it to local police. In India, use the official government CEIR service to request blocking of a lost/stolen phone IMEI: https://www.ceir.gov.in/."],warn:"Never share OTPs, passwords, PINs or recovery codes with someone who claims they found your phone."}},
+ {id:"transfer", icon:"💳", en:{title:"Money sent to the wrong account",desc:"Act quickly and keep transaction evidence.",steps:["Contact your bank or payment app through its official app or verified customer-care channel immediately.","Save the transaction ID, date, amount and screenshots. Never publish them publicly.","Ask the bank/payment provider to register a complaint and explain the next steps.","If you suspect fraud in India, report it promptly at the official cybercrime portal https://www.cybercrime.gov.in/ or call 1930 for financial cyber fraud."],warn:"Do not pay a stranger a ‘recovery fee’ or share your UPI PIN/OTP. A UPI PIN is used to send money, not receive it."}},
+ {id:"documents", icon:"📄", en:{title:"Important document lost",desc:"Reduce misuse risk and find the official replacement process.",steps:["List what was lost and when/where you last saw it.","If theft or identity misuse is possible, make a report with local police and keep the reference number.","Use only the issuing authority’s official website to request a replacement; requirements differ by document and state.","If bank cards or identity credentials were lost, contact the issuing bank/authority promptly and monitor for unusual activity."],warn:"Avoid uploading full identity documents to unknown websites or sharing ID numbers in public posts."}},
+ {id:"laptop", icon:"💻", en:{title:"Laptop problem before an exam",desc:"Try safe basic checks before making changes.",steps:["Connect the charger and check the wall socket and cable; look for visible damage.","If it is frozen, wait briefly and try the normal restart method if safe. Save work first whenever possible.","For internet trouble, check Wi‑Fi and try the institution’s approved backup connection.","Contact your teacher or exam support immediately, explain the issue, and keep a screenshot or photo if permitted."],warn:"Do not open the laptop casing or install unknown ‘repair’ software if you are unsure."}},
+ {id:"exam", icon:"🎓", en:{title:"Exam-day problem",desc:"Make a calm plan and contact the right person early.",steps:["Check the official exam notice for the venue, time, permitted items and contact details.","If delayed, unwell or missing a required item, contact the exam office or invigilator as soon as possible.","Keep relevant documents and messages ready, but protect private information.","Follow the institution’s official process for reporting an emergency or requesting consideration."],warn:"Do not rely on unofficial social-media messages for exam rules; verify with your institution."}},
+ {id:"emergency", icon:"🚨", en:{title:"Someone may be in immediate danger",desc:"Get local emergency help first.",steps:["Move to a safer place if you can do so without putting yourself at risk.","Call the local emergency number and clearly state your location, what happened and whether anyone is injured.","Follow the dispatcher’s instructions. Do not put yourself in danger to rescue someone.","If safe, stay nearby until trained help arrives."],warn:"In India, 112 is the national emergency response number. For a life-threatening situation, contact emergency services immediately."}}
+];
+const ta = {
+ phone:{title:"தொலைந்த அல்லது திருடப்பட்ட கைப்பேசி",desc:"சிம், கணக்குகள் மற்றும் சாதனத்தைப் பாதுகாக்கவும்.",steps:["மற்றொரு நம்பகமான சாதனத்தில், முன்பே இயக்கப்பட்டிருந்தால், தயாரிப்பாளரின் அதிகாரப்பூர்வ சேவையைப் பயன்படுத்தி கைப்பேசியைக் கண்டறிய அல்லது பாதுகாக்க முயற்சிக்கவும்.","உங்கள் மொபைல் நிறுவனத்தைத் தொடர்புகொண்டு சிம் கார்டைத் தடுக்கவும்; மாற்றுச் சிம் பற்றி கேட்கவும்.","முக்கிய மின்னஞ்சல் மற்றும் கணக்குகளின் கடவுச்சொற்களை மாற்றி, இயன்றால் பிற அமர்வுகளிலிருந்து வெளியேறவும்.","திருட்டு எனச் சந்தேகித்தால் காவல்துறையில் புகார் அளிக்கவும். இந்தியாவில் தொலைந்த/திருடப்பட்ட கைப்பேசியின் IMEI-ஐத் தடுக்க அதிகாரப்பூர்வ CEIR தளத்தைப் பயன்படுத்தலாம்: https://www.ceir.gov.in/."],warn:"OTP, கடவுச்சொல், PIN அல்லது மீட்புக் குறியீடுகளை யாரிடமும் பகிர வேண்டாம்."},
+ transfer:{title:"தவறான வங்கிக் கணக்கிற்கு பணம் அனுப்பிவிட்டீர்களா?",desc:"உடனடியாகச் செயல்பட்டு பரிவர்த்தனை ஆதாரத்தை வைத்திருங்கள்.",steps:["உங்கள் வங்கி அல்லது பணப்பரிவர்த்தனை செயலியின் அதிகாரப்பூர்வ வழி மூலம் உடனே தொடர்புகொள்ளவும்.","பரிவர்த்தனை எண், தேதி, தொகை மற்றும் திரைப்பிடிப்புகளைப் பாதுகாப்பாக வைத்திருங்கள்; பொதுவில் பகிர வேண்டாம்.","புகார் பதிவு செய்து அடுத்த படிகளை வங்கி/சேவை வழங்குநரிடம் கேளுங்கள்.","இந்தியாவில் இணைய நிதி மோசடி சந்தேகம் இருந்தால் https://www.cybercrime.gov.in/ என்ற அதிகாரப்பூர்வ தளத்தில் உடனே புகாரளிக்கவும் அல்லது 1930-ஐ அழைக்கவும்."],warn:"‘பணத்தை மீட்டுத் தருகிறோம்’ என்று கூறும் அந்நியருக்கு கட்டணம் செலுத்தாதீர்கள். UPI PIN/OTP-ஐ பகிர வேண்டாம்."},
+ documents:{title:"முக்கிய ஆவணம் தொலைந்துவிட்டதா?",desc:"தவறாகப் பயன்படுத்தப்படுவதைத் தடுத்து, அதிகாரப்பூர்வ மாற்று முறையைப் பின்பற்றவும்.",steps:["எந்த ஆவணம், எப்போது, எங்கு தொலைந்தது என்பதைப் பதிவு செய்யவும்.","திருட்டு அல்லது அடையாளத் தவறான பயன்பாடு சந்தேகமிருந்தால் காவல்துறையில் புகார் அளித்து குறிப்பு எண்ணை வைத்திருங்கள்.","அந்த ஆவணத்தை வழங்கிய அதிகாரத்தின் அதிகாரப்பூர்வ தளத்தில் மட்டுமே மாற்று ஆவணத்திற்கான முறையைப் பார்க்கவும்.","வங்கி அட்டை அல்லது அடையாள ஆவணம் தொலைந்திருந்தால் சம்பந்தப்பட்ட வங்கி/அதிகாரத்தை உடனே தொடர்புகொள்ளவும்."],warn:"அறியாத இணையதளங்களில் முழு அடையாள ஆவணங்களையோ எண்களையோ பதிவேற்ற வேண்டாம்."},
+ laptop:{title:"தேர்வுக்கு முன் மடிக்கணினி பிரச்சினை",desc:"பாதுகாப்பான அடிப்படைச் சோதனைகளை முயற்சிக்கவும்.",steps:["சார்ஜர், கேபிள் மற்றும் மின்சார இணைப்பைச் சரிபார்க்கவும்; சேதம் இருந்தால் பயன்படுத்த வேண்டாம்.","சாதனம் உறைந்திருந்தால் சிறிது காத்திருந்து, பாதுகாப்பாக இருந்தால் வழக்கமான முறையில் மறுதொடக்கம் செய்யவும்.","இணையப் பிரச்சினை என்றால் Wi‑Fi-ஐச் சரிபார்த்து, அனுமதிக்கப்பட்ட மாற்று இணைப்பைப் பயன்படுத்தவும்.","ஆசிரியர் அல்லது தேர்வு உதவி மையத்தை உடனே தொடர்புகொண்டு பிரச்சினையைத் தெரிவிக்கவும்."],warn:"தெரியாத repair மென்பொருளை நிறுவாதீர்கள்; தெரியாவிட்டால் மடிக்கணினியைத் திறக்க வேண்டாம்."},
+ exam:{title:"தேர்வு நாளில் பிரச்சினை",desc:"அமைதியாக இருந்து சரியான அதிகாரியை முன்கூட்டியே தொடர்புகொள்ளவும்.",steps:["தேர்வு நேரம், இடம், அனுமதிக்கப்பட்ட பொருட்கள் ஆகியவற்றை அதிகாரப்பூர்வ அறிவிப்பில் சரிபார்க்கவும்.","தாமதம், உடல்நலக் குறைவு அல்லது தேவையான பொருள் இல்லாமை ஏற்பட்டால் தேர்வு அலுவலகம்/கண்காணிப்பாளரை உடனே தொடர்புகொள்ளவும்.","தேவையான ஆவணங்களையும் செய்திகளையும் தயார் வைத்திருங்கள்; தனிப்பட்ட தகவல்களைப் பாதுகாக்கவும்.","அவசரநிலையைப் பதிவு செய்ய கல்வி நிறுவனம் கூறும் அதிகாரப்பூர்வ முறையைப் பின்பற்றவும்."],warn:"சமூக வலைதளச் செய்திகளை மட்டும் நம்பாமல், உங்கள் கல்வி நிறுவனத்திடம் உறுதிப்படுத்தவும்."},
+ emergency:{title:"யாருக்காவது உடனடி ஆபத்து இருக்கிறதா?",desc:"முதலில் உள்ளூர் அவசர உதவியை அழைக்கவும்.",steps:["உங்களுக்கு ஆபத்து ஏற்படாமல் பாதுகாப்பான இடத்திற்குச் செல்லவும்.","உள்ளூர் அவசர எண்ணை அழைத்து, இடம், நடந்தது, காயமடைந்தவர்கள் உள்ளனரா என்பதைத் தெளிவாகச் சொல்லவும்.","அவசர உதவி மையத்தின் வழிமுறைகளைப் பின்பற்றவும்; உங்களை ஆபத்தில் ஆழ்த்தாதீர்கள்.","பாதுகாப்பாக இருந்தால் பயிற்சி பெற்ற உதவி வரும் வரை அருகில் இருங்கள்."],warn:"இந்தியாவில் தேசிய அவசர உதவி எண் 112. உயிருக்கு ஆபத்தான சூழலில் உடனே அவசர உதவியைத் தொடர்புகொள்ளவும்."}
+};
+function render(){
+ const lang=document.getElementById('language').value, q=document.getElementById('search').value.trim().toLowerCase();
+ const cards=document.getElementById('cards'); cards.innerHTML='';
+ const isTa=lang==='ta';
+ document.documentElement.lang=lang;
+ document.getElementById('tagline').textContent=isTa?'எதிர்பாராத சூழ்நிலைகளுக்கு தெளிவான வழிமுறைகள் — தமிழிலும் ஆங்கிலத்திலும்.':'Clear steps for unexpected situations — in English and Tamil.';
+ document.getElementById('search').placeholder=isTa?'பிரச்சினையைத் தேடுங்கள்…':'Search a problem…';
+ document.getElementById('notice').textContent=isTa?'முக்கிய குறிப்பு: இது பொதுவான வழிகாட்டி மட்டுமே. உடனடி ஆபத்து அல்லது மருத்துவ அவசரநிலையில் உள்ளூர் அவசர சேவையைத் தொடர்புகொள்ளவும். அதிகாரப்பூர்வ ஆதாரங்களைச் சரிபார்க்கவும்.':'Important: This is general guidance, not a substitute for professional help. For immediate danger or a medical emergency, contact local emergency services. Verify instructions with official sources.';
+ document.getElementById('footer').innerHTML=isTa?'தனியுரிமை: கடவுச்சொல், OTP, வங்கி விவரம் அல்லது முழு அடையாள ஆவணங்களை இந்தப் பக்கத்தில் உள்ளிட வேண்டாம். வழிகாட்டிகள் பொதுவான தகவல்களாகும்.':'Privacy: Do not enter passwords, OTPs, bank details or full identity documents on this page. Guides are general information. Please verify important steps with official sources.';
+ let count=0;
+ guides.forEach(g=>{
+   const d=isTa?(ta[g.id]||g.en):g.en;
+   if(!(g.en.title+' '+g.en.desc+' '+(ta[g.id]?.title||'')).toLowerCase().includes(q) && !(d.title+' '+d.desc).toLowerCase().includes(q)) return;
+   count++;
+   const card=document.createElement('article'); card.className='card';
+   card.innerHTML=`<div class="icon">${g.icon}</div><h2>${d.title}</h2><p>${d.desc}</p><button class="primary">${isTa?'வழிமுறைகளைப் பார்க்க':'View steps'}</button><div class="details"><ol>${d.steps.map(s=>`<li>${escapeHtml(s).replace(/(https:\/\/[^\s]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')}</li>`).join('')}</ol><div class="urgent"><strong>${isTa?'கவனம்:':'Caution:'}</strong> ${d.warn}</div></div>`;
+   const btn=card.querySelector('button'), details=card.querySelector('.details');
+   btn.addEventListener('click',()=>{details.classList.toggle('show');btn.textContent=details.classList.contains('show')?(isTa?'மறைக்க':'Hide steps'):(isTa?'வழிமுறைகளைப் பார்க்க':'View steps');});
+   cards.appendChild(card);
+ });
+ document.getElementById('empty').style.display=count?'none':'block';
+ document.getElementById('empty').textContent=isTa?'பொருத்தமான வழிகாட்டி கிடைக்கவில்லை. வேறு சொல் முயற்சிக்கவும்.':'No matching guide found. Try another word.';
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+document.getElementById('language').addEventListener('change',render);
+document.getElementById('search').addEventListener('input',render);
+render();
+</script>
+</body>
+</html>
