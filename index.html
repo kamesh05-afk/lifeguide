@@ -43,7 +43,7 @@ function findGuide(){const q=$('question').value.trim().toLocaleLowerCase(),t=T[
 const keys=[['phone',['phone','mobile','stolen','lost phone','கைப்பேசி','மொபைல்','திருட','தொலைந்த']],['money',['money','transfer','payment','upi','scam','fraud','bank','பணம்','வங்கி','மோசடி','பரிமாற்றம்']],['documents',['document','certificate','id card','passport','ஆவணம்','சான்றிதழ்','அடையாள அட்டை']],['laptop',['laptop','computer','internet','wifi','கணினி','மடிக்கணினி','இணையம்']],['exam',['exam','college','test','study','தேர்வு','கல்லூரி','படிப்பு']],['emergency',['danger','emergency','injured','hurt','unsafe','ஆபத்து','அவசரம்','காயம்']],['travel',['travel','train','bus','journey','பயணம்','ரயில்','பேருந்து']]];
 const match=keys.find(([id,words])=>words.some(w=>q.includes(w)));if(match){const g=G.find(x=>x.id===match[0]),d=lang==='ta'?g.ta:g.en;out.textContent=d.title+'\n\n'+d.steps.map((s,i)=>`${i+1}. ${s}`).join('\n')+'\n\n'+(lang==='ta'?'கவனம்: ':'Caution: ')+d.warn+'\n\n'+(lang==='ta'?'இது பொதுவான வழிகாட்டி மட்டுமே.':'This is general guidance only.');$('search').value=lang==='ta'?d.title:g.en.title;render()}else{out.textContent=lang==='ta'?'பொருத்தமான வழிகாட்டி இல்லை. வேறு சொற்களில் முயற்சி
   }
-                     }else{out.textContent=lang==='ta'?'பொருத்தமான வழிகாட்டி இல்லை. வேறு சொற்களில் முயற்சி}
+  else{out.textContent=lang==='ta'?'பொருத்தமான வழிகாட்டி இல்லை. வேறு சொற்களில் முயற்சி }
   </script>
 </body>
 </html>
